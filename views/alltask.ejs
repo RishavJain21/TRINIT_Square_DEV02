@@ -65,11 +65,31 @@
                 <tr>
                     <th><a class="anc" href=""><%=task.bugtitle%></a></th>
                     <td><%=task.deadline%></td>
-                    <td><a class="anc" href=""><%=task.assigned_to.name%></a></td>
+                    <td>
+                    <%if(task.assigned){%>
+                    <a class="anc" href=""><%=task.assigned_to[0].name%></a></td>
+                    <%}else{%>
+                      <form action="/alltask" method="post">
+
+          
+                      <select name="ROLE" id="role" class="form-control" style="text-align: center;">
+                      <%for(var i=0;i<sub.length;i++){%>
+                        <option value="<%=sub[i]._id%>"><%=sub[i].name%></option>
+                      <%};%>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Assign</button>
+                  </form>
+                    <%}%>
+                    </td>
                     <td><%=task.threatlevel%></td>
                 </tr>
               <%})%>
         </tbody>
       </table>
+  </div>
+  <div id="footer" style="padding-top: 10px;">
+    <div class="container">
+      <p class="footer-block" style="text-align: center;">&copy; 2022 SQUARE, Inc</p>
+    </div>
   </div>
 </body>

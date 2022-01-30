@@ -37,7 +37,10 @@ const admin1 = new user({name:"Peter",email:"fc@gmail.com",password:"hello",empl
 //     if(err){console.log(err);}
 //     else console.log("Successfully saved");
 // });
-
+// const chatSchema = new mongoose.Schema({
+//     messages: [{ message_body: String, user_message: Boolean }],
+// });
+// const chat = mongoose.model("Chat",chatSchema);
 const bugSchema = new mongoose.Schema({
     project: String,
     bugtitle: String,
@@ -52,8 +55,14 @@ const bugSchema = new mongoose.Schema({
     deadline: Date,
     resolved_on: Date,
     resolved: Boolean,
-    report: String
+    report: String,
+    messages: [{ message_body: String, user_message: Boolean, time_of_message:Date }],
 });
+const defaultmessage= {
+    message_body: "How can I help you?",
+    user_message: false,
+    time_of_message: new Date()
+}
 const bug = mongoose.model("Bug", bugSchema);
 
 const bug1= new bug({project:"1",bugtitle:"bug1",bugdesc:"not opening",reported_by:user1,assigned:true,assigned_to:[emp1],date:new Date(),threatlevel:3});
@@ -83,13 +92,10 @@ const bug4= new bug({project:"1",bugtitle:"bug4",bugdesc:"not closing",reported_
 //     else console.log("Successfully saved");
 // });
 
-const chatSchema = new mongoose.Schema({
-    user_:userSchema,
-    emp_:userSchema,
-    bug:bugSchema,
-    messages: [{ message_body: String, user_message: Boolean }],
+app.post("/alltask",function(req,res){
+    console.log("^^^^^^^^^^");
+    console.log(req.body);
 });
-const chat = mongoose.model("Chat",chatSchema);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -153,6 +159,9 @@ app.post("/bug",function(req,res){
     if(currentuser===defaultuser){res.redirect("/signin")};
     // console.log("*");
     // console.log(currentuser);
+    var dt = new Date();
+   dt.setDate(dt.getDate() + 5);
+//    alert(dt);
     const newbug= new bug({
         project:req.body.state,
         bugtitle:req.body.Title ,
@@ -162,7 +171,9 @@ app.post("/bug",function(req,res){
         reported_by:currentuser,
         assigned:true,
         assigned_to:[emp1],
-        resolved:false
+        resolved:false,
+        messages:[defaultmessage],
+        deadline:dt
     });
     console.log(newbug);
     bug.insertMany([newbug],function(err){
@@ -200,11 +211,45 @@ app.get("/", function (req, res) {
 app.get("/report/:bugid",function(req,res){
     res.render("report",{bugid:req.params.bugid});
 });
+app.get("/myTeam",function(req,res){
+    user.find({employee:true},function(err,found){
+        res.render("myTeam",{team:found});
+    });
+});
 app.post("/report/:bugid",function(req,res){
     console.log(req.body);
     console.log(req.params);
     bug.updateOne({_id:req.params.bugid},{report:req.body.bugREPORT,resolved:true},function(err){console.log(err);});
     res.redirect("/taskemp/"+req.params.bugid);
+});
+
+app.get("/chat/:bugid",function(req,res){
+    bug.findOne({ _id:req.params.bugid }, function (err, found) {
+        if(!err){
+            console.log(found);
+            res.render("chat",{bug:found,employee:currentuser.employee});
+        }else{console.log(err);}
+      });
+    // render("chat",)
+});
+app.post("/chat/:bugid",function(req,res){
+    console.log(req.body);
+    const msg={
+        message_body:req.body.newmsg,
+        user_message:req.body.emp,
+        time_of_message:new Date()
+    }
+    // bug.updateOne({_id:req.params.bugid},{messages:messages},function(err){console.log(err);});
+    console.log(msg);
+    bug.findOne({ _id:req.params.bugid }, function (err, found) {
+        if(!err){
+            const msgs=found.messages;
+            msgs.push(msg);
+            console.log(msgs);
+            bug.updateOne({_id:req.params.bugid},{messages:msgs},function(err){console.log(err);});
+        }else{console.log(err);}
+    });
+    res.redirect("/chat/"+req.params.bugid);
 });
 app.get("/homeuser",function (req, res) {
     console.log(currentuser);
@@ -233,7 +278,10 @@ app.get("/bug", function (req, res) {
 app.get("/alltask",function(req,res){
     if(currentuser===defaultuser){res.redirect("/signin")};
     bug.find({threatlevel:{$lt:currentuser.emplevel+1}},function(err,found){//threatlevel:{$lt:currentuser.emplevel-1}
-        res.render("alltask",{allTasks:found});
+        user.find({employee:true,emplevel:{$lt:currentuser.emplevel}},function(err,sub){//threatlevel:{$lt:currentuser.emplevel-1}
+            console.log(sub);
+            res.render("alltask",{allTasks:found,sub:sub});
+        });
     });
 });
 
@@ -252,10 +300,7 @@ app.get("/mytasks",function(req,res){
     });
 });
 
-app.get("/myTeam",function (req, res) {
-    if(currentuser===defaultuser){res.redirect("/signin")};
-    res.render("myTeam");
-});
+
 
 app.get("/taskemp/:bugid",function (req, res) {
     if(currentuser===defaultuser){res.redirect("/signin")};
