@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>SQUARE | Team</title>
+    <title>SQUARE | REPORT</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -53,4 +53,22 @@
         </div>
     </nav>
 </div>
+<h1 style="color: black; text-align: center; margin: 20px auto;">BUG REPORT</h1>
+<div class="container" style="padding-top: 30px; width: 70%;">
+    <form action="/report/<%=bugid%>" method="post">
+        <!-- <div class="mb-3">
+            <label for="bugTitle" class="form-label">Bug-Title</label>
+            <input name="bugTitle" class="form-control" id="bugTitle" placeholder="Title">
+        </div> -->
+
+        <div class="mb-3">
+            <label for="bugReport" class="form-label">BUG REPORT</label>
+            <textarea name="bugREPORT" class="form-control" id="bugReport" rows="3"></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="submit" name="button" value="">ADD REPORT</button>
+
+    </form>
+</div>
+
 </body>

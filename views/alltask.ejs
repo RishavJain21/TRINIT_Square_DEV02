@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>ALL TASKS | SQUARE</title>
+  <link rel="icon" href="favicon.ico">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="/css/styles.css"> -->
+  <script src="https://kit.fontawesome.com/0a79164bba.js" crossorigin="anonymous"></script>
+  <style>
+    .anc{
+        color: black;
+    }
+    .anc:link {
+      text-decoration: none;
+    }
+    
+    .anc:visited {
+      text-decoration: none;
+    }
+    
+    .anc:hover {
+      text-decoration: underline;
+    }
+    
+    .anc:active {
+      text-decoration: underline;
+    }
+    </style>
+</head>
+<body>
+    
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <p class="navbar-brand"><i class="far fa-square"></i> SQUARE</p>
+      </div>
+        <ul class="nav navbar-nav navbar-right">
+          <!-- 6 -->
+          <li id="allTask"><a href="../alltask">ALL TASKS</a></li>
+          <li id="myTask"><a href="../mytasks">MY TASKS</a></li>
+          <li id="addBug"><a href="../bug">REPORT BUG</a></li>
+          <li id="myTeam"><a href="../myTeam">MY TEAM</a></li>
+          <li id="profile"><a href="../home">PROFILE <i class="fas fa-user"></i></a></li>
+          
+        </ul>
+    </div>
+  </nav>
+  <h1 style="color: black; text-align: center;">ALL TASKS</h1>
+  <br><br>
+  <div class="container">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Threat Level</th>
+          </tr>
+        </thead>
+        <tbody>
+            <%allTasks.forEach(function(task){%>
+                <tr>
+                    <th><a class="anc" href=""><%=task.bugtitle%></a></th>
+                    <td><%=task.deadline%></td>
+                    <td><a class="anc" href=""><%=task.assigned_to.name%></a></td>
+                    <td><%=task.threatlevel%></td>
+                </tr>
+              <%})%>
+        </tbody>
+      </table>
+  </div>
+</body>
